@@ -9,13 +9,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class FindApartmentTest {
 
+    static final Building GYM = new Building("gym");
+    static final Building STORE = new Building("store");
+
     @Test
     void canSpotRequirementsAvailableInDifferentIndices() {
-        List<String> requirements = List.of("gym", "store");
-        List<Map<String, Boolean>> blocks = List.of(
-                Map.of("gym", true, "store", false),
-                Map.of("gym", false, "store", false),
-                Map.of("gym", false, "store", true)
+        List<Building> requirements = List.of(GYM, STORE);
+        List<Map<Building, Boolean>> blocks = List.of(
+                Map.of(GYM, true, STORE, false),
+                Map.of(GYM, false, STORE, false),
+                Map.of(GYM, false, STORE, true)
         );
 
         int index = FindApartment.find(requirements, blocks);
@@ -25,11 +28,11 @@ class FindApartmentTest {
 
     @Test
     void canSpotRequirementsAvailableInSameIndex() {
-        List<String> requirements = List.of("gym", "store");
-        List<Map<String, Boolean>> blocks = List.of(
-                Map.of("gym", true, "store", false),
-                Map.of("gym", false, "store", true),
-                Map.of("gym", true, "store", true)
+        List<Building> requirements = List.of(GYM, STORE);
+        List<Map<Building, Boolean>> blocks = List.of(
+                Map.of(GYM, true, STORE, false),
+                Map.of(GYM, false, STORE, true),
+                Map.of(GYM, true, STORE, true)
         );
 
         int index = FindApartment.find(requirements, blocks);
@@ -39,11 +42,11 @@ class FindApartmentTest {
 
     @Test
     void providesFirstIndexFoundIfMultipleAvailable() {
-        List<String> requirements = List.of("gym", "store");
-        List<Map<String, Boolean>> blocks = List.of(
-                Map.of("gym", true, "store", true),
-                Map.of("gym", false, "store", true),
-                Map.of("gym", true, "store", true)
+        List<Building> requirements = List.of(GYM, STORE);
+        List<Map<Building, Boolean>> blocks = List.of(
+                Map.of(GYM, true, STORE, true),
+                Map.of(GYM, false, STORE, true),
+                Map.of(GYM, true, STORE, true)
         );
 
         int index = FindApartment.find(requirements, blocks);
@@ -53,11 +56,11 @@ class FindApartmentTest {
 
     @Test
     void returnsMinusOneIfNoOptionAvailableWithAllRequirements() {
-        List<String> requirements = List.of("gym", "store");
-        List<Map<String, Boolean>> blocks = List.of(
-                Map.of("gym", false, "store", true),
-                Map.of("gym", false, "store", true),
-                Map.of("gym", false, "store", true)
+        List<Building> requirements = List.of(GYM, STORE);
+        List<Map<Building, Boolean>> blocks = List.of(
+                Map.of(GYM, false, STORE, true),
+                Map.of(GYM, false, STORE, true),
+                Map.of(GYM, false, STORE, true)
         );
 
         int index = FindApartment.find(requirements, blocks);

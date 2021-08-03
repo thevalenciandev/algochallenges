@@ -14,7 +14,7 @@ public class FindApartment {
 
     public static final int INITIAL_VALUE = Integer.MAX_VALUE;
 
-    public static int find(Collection<String> requirements, List<Map<String, Boolean>> blocks) {
+    public static int find(Collection<Building> requirements, List<Map<Building, Boolean>> blocks) {
 
         // i = 0                distAt0:gym=MAX,store=MAX
         // i = 0, leftIndex = 0 distAt0:gym=0,store=MAX
@@ -24,16 +24,16 @@ public class FindApartment {
         // found both. Stop iterating
         // Furthest distance = max (0, 2) -> 2
 
-        List<Map<String, Integer>> distances = calculateDistances(requirements, blocks);
+        List<Map<Building, Integer>> distances = calculateDistances(requirements, blocks);
         return determineIndex(distances);
     }
 
-    private static List<Map<String, Integer>> calculateDistances(Collection<String> requirements, List<Map<String, Boolean>> blocks) {
-        List<Map<String, Integer>> distances = prepareIndices(requirements, blocks.size());
+    private static List<Map<Building, Integer>> calculateDistances(Collection<Building> requirements, List<Map<Building, Boolean>> blocks) {
+        List<Map<Building, Integer>> distances = prepareIndices(requirements, blocks.size());
         // traverse blocks and for each, calculate min distance to requirements, to left and right
         for (int i = 0; i < blocks.size(); i++) {
             // 0. calc itself
-            Map<String, Integer> distancesFromIndex = distances.get(i);
+            Map<Building, Integer> distancesFromIndex = distances.get(i);
             if (allDistancesCalculatedForIndex(distancesFromIndex)) {
                 continue;
             }
@@ -60,13 +60,13 @@ public class FindApartment {
         return distances;
     }
 
-    private static boolean allDistancesCalculatedForIndex(Map<String, Integer> distancesFromIndex) {
+    private static boolean allDistancesCalculatedForIndex(Map<Building, Integer> distancesFromIndex) {
         return distancesFromIndex.values().stream().noneMatch(dist -> dist.equals(INITIAL_VALUE));
     }
 
-    private static void updateDistances(int newDistance, Collection<String> requirements, Map<String, Integer> distancesFromIndex, Map<String, Boolean> buildingsAtIndex) {
+    private static void updateDistances(int newDistance, Collection<Building> requirements, Map<Building, Integer> distancesFromIndex, Map<Building, Boolean> buildingsAtIndex) {
         // Calculate distances from the current index to the requirements
-        for (String building : requirements) {
+        for (Building building : requirements) {
             boolean found = buildingsAtIndex.get(building);
             if (found) {
                 // recalc distance
@@ -76,8 +76,8 @@ public class FindApartment {
         }
     }
 
-    private static List<Map<String, Integer>> prepareIndices(Collection<String> reqs, int size) {
-        List<Map<String, Integer>> distances = new ArrayList<>(size);
+    private static List<Map<Building, Integer>> prepareIndices(Collection<Building> reqs, int size) {
+        List<Map<Building, Integer>> distances = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
             // initialise distances to requirements with maximum values
             distances.add(reqs.stream().collect(Collectors.toMap(building -> building, distance -> INITIAL_VALUE)));
@@ -85,12 +85,12 @@ public class FindApartment {
         return distances;
     }
 
-    private static int determineIndex(List<Map<String, Integer>> distances) {
+    private static int determineIndex(List<Map<Building, Integer>> distances) {
         // Determine index from which we minimise the furthest distance to all requirements
         int minDistance = INITIAL_VALUE;
         int index = -1;
         for (int i = 0; i < distances.size(); i++) {
-            Map<String, Integer> distancesAtIndex = distances.get(i);
+            Map<Building, Integer> distancesAtIndex = distances.get(i);
             // This .get() is safe as we assume that all indexes have all "requirements", and have hence been initialised.
             int maxForIndex = distancesAtIndex.values().stream().max(Integer::compareTo).get();
             if (maxForIndex < minDistance) {
