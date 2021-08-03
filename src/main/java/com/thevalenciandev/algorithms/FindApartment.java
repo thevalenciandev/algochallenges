@@ -8,22 +8,13 @@ import java.util.stream.Collectors;
 
 /**
  * Find the apartment that minimises the furthest distance that you'd have to walk to
- * to get to all the buildings that you value
+ * to get to all the buildings that you value (these are named requirements below)
  */
-public class FindAppartment {
+public class FindApartment {
 
     public static final int INITIAL_VALUE = Integer.MAX_VALUE;
 
-    public static void main(String[] args) {
-
-        Collection<String> requirements = List.of("gym", "store");
-
-        List<Map<String, Boolean>> blocks = List.of(
-                Map.of("gym", true, "store", false),
-                Map.of("gym", false, "store", false),
-//                Map.of("gym", false, "store", false),
-                Map.of("gym", false, "store", true)
-        );
+    public static int find(Collection<String> requirements, List<Map<String, Boolean>> blocks) {
 
         // i = 0                distAt0:gym=MAX,store=MAX
         // i = 0, leftIndex = 0 distAt0:gym=0,store=MAX
@@ -33,6 +24,11 @@ public class FindAppartment {
         // found both. Stop iterating
         // Furthest distance = max (0, 2) -> 2
 
+        List<Map<String, Integer>> distances = calculateDistances(requirements, blocks);
+        return determineIndex(distances);
+    }
+
+    private static List<Map<String, Integer>> calculateDistances(Collection<String> requirements, List<Map<String, Boolean>> blocks) {
         List<Map<String, Integer>> distances = prepareIndices(requirements, blocks.size());
         // traverse blocks and for each, calculate min distance to requirements, to left and right
         for (int i = 0; i < blocks.size(); i++) {
@@ -61,21 +57,7 @@ public class FindAppartment {
                 updateDistances(distance, requirements, distancesFromIndex, blocks.get(rightIndex));
             }
         }
-
-        // Determine index from which we minimise the furthest distance to all requirements
-        int minDistance = INITIAL_VALUE;
-        int index = -1;
-        for (int i = 0; i < distances.size(); i++) {
-            Map<String, Integer> distancesAtIndex = distances.get(i);
-            // This .get() is safe as we assume that all indexes have all "requirements", and have hence been initialised.
-            int maxForIndex = distancesAtIndex.values().stream().max(Integer::compareTo).get();
-            if (maxForIndex < minDistance) {
-                minDistance = maxForIndex;
-                index = i;
-            }
-            minDistance = Math.min(minDistance, maxForIndex);
-        }
-        System.out.println("Index that minimises the furthest distance to all requirements is " + index + ", with distance " + minDistance);
+        return distances;
     }
 
     private static boolean allDistancesCalculatedForIndex(Map<String, Integer> distancesFromIndex) {
@@ -101,5 +83,21 @@ public class FindAppartment {
             distances.add(reqs.stream().collect(Collectors.toMap(building -> building, distance -> INITIAL_VALUE)));
         }
         return distances;
+    }
+
+    private static int determineIndex(List<Map<String, Integer>> distances) {
+        // Determine index from which we minimise the furthest distance to all requirements
+        int minDistance = INITIAL_VALUE;
+        int index = -1;
+        for (int i = 0; i < distances.size(); i++) {
+            Map<String, Integer> distancesAtIndex = distances.get(i);
+            // This .get() is safe as we assume that all indexes have all "requirements", and have hence been initialised.
+            int maxForIndex = distancesAtIndex.values().stream().max(Integer::compareTo).get();
+            if (maxForIndex < minDistance) {
+                minDistance = maxForIndex;
+                index = i;
+            }
+        }
+        return index;
     }
 }
