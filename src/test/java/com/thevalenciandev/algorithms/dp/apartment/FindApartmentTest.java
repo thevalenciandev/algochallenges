@@ -1,5 +1,7 @@
-package com.thevalenciandev.algorithms;
+package com.thevalenciandev.algorithms.dp.apartment;
 
+import com.thevalenciandev.algorithms.dp.apartment.Building;
+import com.thevalenciandev.algorithms.dp.apartment.FindApartment;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -66,6 +68,28 @@ class FindApartmentTest {
         int index = FindApartment.find(requirements, blocks);
 
         assertEquals(-1, index);
+
+        System.out.println("abcde".substring(3, 4));
+    }
+
+    @Test
+    void dynamicProgrammingTest() {
+        List<Building> requirements = List.of(GYM, STORE);
+        List<Map<Building, Boolean>> blocks = List.of(
+                Map.of(GYM, false, STORE, true),
+                Map.of(GYM, false, STORE, false),
+                Map.of(GYM, false, STORE, false),
+                Map.of(GYM, false, STORE, false),
+                Map.of(GYM, false, STORE, false),
+                Map.of(GYM, false, STORE, false),
+                Map.of(GYM, false, STORE, false),
+                Map.of(GYM, false, STORE, true),
+                Map.of(GYM, true, STORE, true)
+        );
+
+        int index = FindApartment.find(requirements, blocks);
+
+        assertEquals(8, index);
     }
 
 }

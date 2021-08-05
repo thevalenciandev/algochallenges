@@ -1,10 +1,11 @@
-package com.thevalenciandev.algorithms;
+package com.thevalenciandev.algorithms.dp.apartment;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toMap;
 
 /**
  * Find the apartment that minimises the furthest distance that you'd have to walk to
@@ -61,6 +62,7 @@ public class FindApartment {
     }
 
     private static boolean allDistancesCalculatedForIndex(Map<Building, Integer> distancesFromIndex) {
+        // all requirements have been found and calculated
         return distancesFromIndex.values().stream().noneMatch(dist -> dist.equals(INITIAL_VALUE));
     }
 
@@ -80,7 +82,7 @@ public class FindApartment {
         List<Map<Building, Integer>> distances = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
             // initialise distances to requirements with maximum values
-            distances.add(reqs.stream().collect(Collectors.toMap(building -> building, distance -> INITIAL_VALUE)));
+            distances.add(reqs.stream().collect(toMap(building -> building, distance -> INITIAL_VALUE)));
         }
         return distances;
     }
